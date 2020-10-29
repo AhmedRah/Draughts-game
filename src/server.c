@@ -103,7 +103,7 @@ int main()
 	// Attente des donnees emises par le client
 	do{
 		comm_client(nb_octets ,s ,buffer ,addr_local ,addr_client ,host_client,lg,rep);
-
+		
 	}while(1);
 
 	printf("**************** Arret du serveur ****************\n");

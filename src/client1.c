@@ -19,11 +19,6 @@ int main ()
 	socklen_t lg ;
 	int s ;
 
-	char *mes = (char*)malloc(50);
-	printf("\n message : ");
-	fgets(mes,50,stdin);
-	mes[strcspn(mes, "\n")] = 0 ;
-
 	char *rep ;
 
 	char buffer[Sizebuf];
@@ -69,29 +64,45 @@ int main ()
 
 
 	// -----
-
-
-	// envoie de message
-	lg = sizeof(struct sockaddr_in);
-	nb_octets = sendto(s,mes,strlen(mes)+1,0,(struct sockaddr*)&addr_serveur,lg);
-	if(nb_octets == -1)
-	{
-		perror("Erreur d'envoi \n");
-		exit(1);
-	}
-	printf(" Client : Packet envoye \n");
-
-	// Attendre la reponse du serveur
-	nb_octets = recvfrom(s,buffer,Sizebuf,0,(struct sockaddr*)&addr_serveur,&lg);
-	if(nb_octets == -1)
-	{
-		perror("Erreur reponse serveur");
-		exit(1);
-	}
-
-	printf(" Reponse recu : %s \n", buffer);
+	// Allocation de memoire pour le message qu'on va envoyer
+	char *mes = (char*)malloc(50);
 	
-	close(s);
+	do
+	{	
+		printf("\n message : ");
+		fgets(mes,50,stdin);
+		mes[strcspn(mes, "\n")] = 0 ;
+		
+		// envoie de message
+		lg = sizeof(struct sockaddr_in);
+		nb_octets = sendto(s,mes,strlen(mes)+1,0,(struct sockaddr*)&addr_serveur,lg);
+		if(nb_octets == -1)
+		{
+			perror("Erreur d'envoi \n");
+			exit(1);
+		}
+		printf(" Client : Packet envoye \n");
 
+		// Attendre la reponse du serveur
+		nb_octets = recvfrom(s,buffer,Sizebuf,0,(struct sockaddr*)&addr_serveur,&lg);
+		if(nb_octets == -1)
+		{
+			perror("Erreur reponse serveur");
+			exit(1);
+		}
+
+		printf(" Reponse recu : %s \n", buffer);
+		
+		// tester si le messsage recu est Quit
+		if(strcmp(mes,"quit") == 0)
+		{
+			printf("Demande d'arret saisie : Fermeture du Client \n");
+			close(s);
+			exit(1);
+		}
+
+	}while(1);
+
+	close(s);
 	return 0;
 }
