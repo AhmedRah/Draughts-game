@@ -9,6 +9,8 @@
 #include <netdb.h>
 #include <errno.h>
 
+#include "SDL_net.h"
+
 #define Sizebuf 100
 
 // Function to communnicate with a client 
@@ -70,6 +72,7 @@ void fun_bind(int s, struct sockaddr_in sin , int ret)
 
 int main()
 {
+
 	static struct sockaddr_in addr_local ;
 	static struct sockaddr_in addr_client ;
 	struct hostent *host_client ;
