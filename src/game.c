@@ -14,20 +14,8 @@
 // #include <SDL2/SDL_image.h>
 // #include <SDL2/SDL_net.h>
 #include "headerFile.h"
+#include "game.h"
 
-// typedef struct Piece {
-//   int team ; //l'equipe : 1 pour premier joueur  , 2 pour deuxieme joueur.
-//   int statut ; // 0 pour piece normale , 1 pour hors-jeux , 2 pour dame
-// } pieces;
-
-
-// typedef struct Games
-// {
-//   pieces* Arr_Table ; // Tableaux de jeux
-//   pieces* Arr_pieces ;// Tableaux des peices
-// } game ;
-
-//
 
 int create_game()
 {
@@ -104,14 +92,14 @@ int load_game(pieces Arr_Table[XSIZE_TABLE][YSIZE_TABLE])
   return 1;
 } 
 
-int main()
-{
-  create_game();
+// int main()
+// {
+//   create_game();
 
-  // Creer une table de jeux vide
-  pieces Arr_Table[XSIZE_TABLE][YSIZE_TABLE]={0};
+//   // Creer une table de jeux vide
+//   pieces Arr_Table[XSIZE_TABLE][YSIZE_TABLE]={0};
 
-  load_game(Arr_Table);
+//   load_game(Arr_Table);
   
-  return EXIT_SUCCESS;
-}
+//   return EXIT_SUCCESS;
+// }

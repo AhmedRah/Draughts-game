@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "headerFile.h"
+#include "identification.h"
 
 // Return 1 if credentials are correct , 0 elswhere
 int log_in(char* username, char* pass)
@@ -54,5 +55,5 @@ int sign_up(char* email,char* username,char* pass)
   // fprintf(data_file,"%d",EOF); // indiquer la fin du fichier
   fclose(data_file);
 
-  return EXIT_SUCCESS;
+  return 1;
 }
