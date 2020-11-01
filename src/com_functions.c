@@ -1,3 +1,9 @@
+// ------------------------------------------------------------------
+//  Projet Reseau 
+//  Realiser par BAH Elhadj Oumar et  RAHMOUNI Ahmed
+// ------------------------------------------------------------------
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
