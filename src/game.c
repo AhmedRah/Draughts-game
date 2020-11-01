@@ -92,6 +92,92 @@ int load_game(pieces Arr_Table[XSIZE_TABLE][YSIZE_TABLE])
   return 1;
 } 
 
+
+// return 0 si la piece ne peut pas se deplacer a la case suivante
+//        1 si c'est possible
+//        2 si la piece mange la piece de la case suivante
+int moveValid(pieces ArrayTable[XSIZE_TABLE][YSIZE_TABLE],int xDep , int yDep, int xArr, int yArr)
+{
+  int valid = 0;
+  if((xArr % 2 == 0 && yArr % 2 != 0) || (xArr % 2 != 0 && yArr % 2 == 0)) //verifie si la case est noir c'est-a-dire valide
+  {
+
+    //Implementation pour la piece dame.........................
+
+    if(ArrayTable[xArr][yArr].team != 0) //verifie si la case n'est pas vide
+    {
+      if(ArrayTable[xDep][yDep].team == ArrayTable[xArr][yArr].team) //verifie si la case est occupee par une piece de la meme equipe
+        valid = 0;
+
+      // if(ArrayTable[xDep][yDep].team != ArrayTable[xArr][yArr].team) //verifie si la case est occupee par une piece de l'equipe adverse
+      //   valid = 2;
+    }
+    else{
+      if(ArrayTable[xDep][yDep].team == 1)
+      {
+        if((xArr == xDep+2) && (ArrayTable[xArr+1][yArr-1].team != ArrayTable[xDep][yDep].team) )
+          valid=2;
+        if((xArr == xDep-2) && (ArrayTable[xArr-1][yArr-1].team != ArrayTable[xDep][yDep].team) )
+          valid=2;
+      }
+      else if(ArrayTable[xDep][yDep].team == 2)
+      {
+        if((xArr == xDep+2) && (ArrayTable[xArr-1][yArr+1].team != ArrayTable[xDep][yDep].team) )
+          valid=2;
+        if((xArr == xDep-2) && (ArrayTable[xArr+1][yArr+1].team != ArrayTable[xDep][yDep].team) )
+          valid=2;
+      }
+      valid = 1; //si la case est vide et valide
+    }
+
+  }
+  return valid;
+}
+
+int movePiece(pieces ArrayTable[XSIZE_TABLE][YSIZE_TABLE],int xDep , int yDep, int xArr, int yArr)
+{
+  if(moveValid(ArrayTable,xDep,yDep,xArr,yArr) == 1)
+  {
+    //printf("ici");
+    pieces temp = ArrayTable[xDep][yDep] ;
+    ArrayTable[xDep][yDep].team = 0 ;
+    ArrayTable[xDep][yDep].statut = 0;
+    ArrayTable[xArr][yArr] = temp ;
+  }else if(moveValid(ArrayTable,xDep,yDep,xArr,yArr) == 2)
+  {
+    
+    if(ArrayTable[xDep][yDep].team == 1)
+    {
+      if(xArr == xDep+2)
+      {
+        ArrayTable[xArr+1][yArr-1].statut = 1;
+      }
+      if(xArr == xDep-2)
+      {
+        ArrayTable[xArr+1][yArr-1].statut = 1;
+      }
+    }
+    else if(ArrayTable[xDep][yDep].team == 2)
+    {
+      if(xArr == xDep+2)
+      {
+        ArrayTable[xArr-1][yArr+1].statut = 1;
+      }
+      if(xArr == xDep-2)
+      {
+        ArrayTable[xArr+1][yArr+1].statut = 1;
+      }
+    } 
+    pieces temp = ArrayTable[xDep][yDep] ;
+    ArrayTable[xArr][yArr] = temp ;
+    ArrayTable[xDep][yDep].team = 0 ;
+    ArrayTable[xDep][yDep].statut = 0;
+    
+  }else printf("Deplacement impossible");
+  return 0 ;
+}
+
+
 // int main()
 // {
 //   create_game();
