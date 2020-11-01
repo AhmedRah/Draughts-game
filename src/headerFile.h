@@ -1,6 +1,9 @@
 #ifndef MY_DEFINES_H
 #define MY_DEFINES_H
+  // Server headers
+  #define MAX_CLIENTS 10
 
+  // Game headers
   #define NB_PLAYERS 2
 
   #define NB_PIECES 40  

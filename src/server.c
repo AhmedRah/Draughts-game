@@ -9,54 +9,39 @@
 #include <netdb.h>
 #include <errno.h>
 
-#include "SDL_net.h"
+#include "headerFile.h"
 
 #define Sizebuf 100
 
-// Function to communnicate with a client 
-void comm_client(int nb_octets ,int s , char* buffer , struct sockaddr_in addr_local , struct sockaddr_in addr_client ,struct hostent *host_client, socklen_t lg, char * rep)
+#define Menu "\n------ Bonjour au jeu de dame ------\n--- 1) creer une partie\n--- 2) joindre ue partie\n--- 3) reagrder une partie active\n------ Votre choix ?\n"
+
+// void sendtoall(char* msg,int curr)
+// {
+// 	int i;
+// 	for(i=0;i<)
+// }
+
+
+// Fonction pour recevoire les message des clients
+void receive(int s,void* buf,ssize_t len,int flags,struct sockaddr* srcaddr,socklen_t* addrlen)
 {
-  nb_octets = recvfrom(s,buffer,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
-		if(nb_octets == -1)
-		{
-			perror("Erreur de reception \n");
-			exit(1);
-		}
-		
-		host_client = gethostbyaddr(&(addr_client.sin_addr),sizeof(long),AF_INET);
-		if(host_client == NULL)
-		{
-			perror("Erreur gethostbyaddr \n");
-			exit(1);
-		}
-
-		// Affichage des messages recu
-		printf(" Le message recu : %s \n",buffer);
-
-		// Envoie des messages
-		nb_octets = sendto(s,rep,strlen(rep)+1,0,(struct sockaddr *)&addr_client,lg);
-		if(nb_octets == -1)
-		{
-			perror("erreur d'envoie de message");
-			exit(1);
-		}
-
-		// tester si le messsage recu est Quit
-		if(strcmp(buffer,"quit") == 0)
-		{
-			printf("Demande d'arret recu : Fermeture du serveur\n");
-			exit(1);
-		}
+	// recevoire les instructions de clinet
+	int nb_octets = recvfrom(s,buf,Sizebuf,0,srcaddr,addrlen);
+	if(nb_octets == -1)
+	{
+		perror("Erreur de reception \n");
+		exit(1);
+	}
 }
+//Fonction pour envoyer les messages aux clients
+// void sendmsg()
 
+// Fonction du bind
 void fun_bind(int s, struct sockaddr_in sin , int ret)
 {
- 
   sin.sin_family = AF_INET;
 	sin.sin_port = htons(8000);
-
 	sin.sin_addr.s_addr = htonl(INADDR_ANY);
-
 	for (int i=0; i<8; i++) 
 	{
 		sin.sin_zero[i] = 0;
@@ -72,6 +57,8 @@ void fun_bind(int s, struct sockaddr_in sin , int ret)
 
 int main()
 {
+	// Liste des clients qui vont communiquer avec le serveur
+	int clients[MAX_CLIENTS];
 
 	static struct sockaddr_in addr_local ;
 	static struct sockaddr_in addr_client ;
@@ -104,10 +91,45 @@ int main()
 
   printf("**************** Serveur local UDP ****************\n");
 	// Attente des donnees emises par le client
-	do{
-		comm_client(nb_octets ,s ,buffer ,addr_local ,addr_client ,host_client,lg,rep);
+	listen(s,20);
+	// do
+	// {
+	// 	receive(s,buffer,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
+
+	// 	// tester si le messsage recu est Quit
+	// 	if(strcmp(buffer,"quit") == 0)
+	// 	{
+	// 		printf("Demande d'arret recu : Fermeture du serveur\n");
+	// 		exit(1);
+	// 	}
+	// 	// Affichage des messages recu
+	// 	printf(" Le message recu : %s \n",buffer);
 		
-	}while(1);
+	// 	host_client = gethostbyaddr(&(addr_client.sin_addr),sizeof(long),AF_INET);
+	// 	if(host_client == NULL)
+	// 	{
+	// 		perror("Erreur gethostbyaddr \n");
+	// 		exit(1);
+	// 	}
+		
+
+	// 	// Envoie des messages
+	// 	//envoie reponse au client
+	// 	nb_octets = sendto(s,Menu,strlen(Menu)+1,0,(struct sockaddr *)&addr_client,lg);
+	// 	if(nb_octets == -1)
+	// 	{
+	// 		perror("erreur d'envoie de message");
+	// 		exit(1);
+	// 	}
+	// 	//envoie reponse au client
+	// 	nb_octets = sendto(s,rep,strlen(rep)+1,0,(struct sockaddr *)&addr_client,lg);
+	// 	if(nb_octets == -1)
+	// 	{
+	// 		perror("erreur d'envoie de message");
+	// 		exit(1);
+	// 	}
+
+	// } while (1);
 
 	printf("**************** Arret du serveur ****************\n");
 
