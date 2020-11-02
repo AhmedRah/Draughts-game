@@ -18,9 +18,9 @@
 #define Sizebuf 100
 
 #include "headerFile.h"
-#include "identification.h"
 #include "game.h"
 #include "com_functions.h"
+
 
 
 
@@ -31,8 +31,7 @@ int main ()
 	static struct sockaddr_in addr_serveur ;
 	socklen_t lg ;
 	int s ;
-	char buffer[Sizebuf];
-	int nb_octets ;
+	// int nb_octets ;
 
 	s = socket(AF_INET,SOCK_DGRAM,0);
 	if (s == -1)
@@ -50,7 +49,7 @@ int main ()
 	
 
 	// Partie du BIND
-	int i, ret;
+	int i;
 
 	addr_serveur.sin_family = AF_INET;
 	addr_serveur.sin_port = htons(8000);
@@ -68,6 +67,7 @@ int main ()
 
 	// --------- Communication avec le serveur ______________________
 	// Allocation de memoire pour le message qu'on va envoyer
+	puts("------------------| Client ACTIVE |------------------\n");
 	char *mes = (char*)malloc(50);
 	char *rep = (char*)malloc(50);
 
@@ -76,8 +76,11 @@ int main ()
 	char usern[20] ;
 	char passw[16] ;
 
+	//declancher la communication avec le serveur
+	sendMessage(s,"Hi !\n",0,(struct sockaddr*)&addr_serveur,lg);
   //recevoir le menu
-  receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
+  receive(s,rep,Sizebuf,0,(struct sockaddr*)&addr_serveur,&lg);
+	printf("%s",rep);
   // envoie du choix du menu
 	fgets(mes,50,stdin);
 	mes[strcspn(mes, "\n")] = 0 ;
@@ -86,34 +89,35 @@ int main ()
   // Si l'utlisateure veut se connecter
 	if(strcmp(mes,"1")==0)
 	{// Connexion
-    receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
-    
-    receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
-    fgets(usern,20,stdin);
+    receive(s,rep,Sizebuf,0,(struct sockaddr*)&addr_serveur,&lg);printf("%s",rep);
+
+    receive(s,rep,Sizebuf,0,(struct sockaddr*)&addr_serveur,&lg);printf("%s",rep);
+		fgets(usern,20,stdin);
 	  usern[strcspn(usern, "\n")] = 0 ;
 		sendMessage(s,usern,0,(struct sockaddr*)&addr_serveur,lg);
+		printf("%s \n",usern);	
 		
-    receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
-    fgets(passw,16,stdin);
+    receive(s,rep,Sizebuf,0,(struct sockaddr*)&addr_serveur,&lg);printf("%s",rep);
+		fgets(passw,16,stdin);
 	  passw[strcspn(passw, "\n")] = 0 ;
     sendMessage(s,passw,0,(struct sockaddr*)&addr_serveur,lg);
 	}
-	else if(mes == "2")
+	else if(strcmp(mes,"2")==0)
 	{// Enregistrement
 		receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
     
     receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
-    fgets(email,30,stdin);
+		fgets(email,30,stdin);
 	  email[strcspn(email, "\n")] = 0 ;
     sendMessage(s,email,0,(struct sockaddr*)&addr_serveur,lg);
 
     receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
-    fgets(usern,20,stdin);
+		// fgets(usern,20,stdin);
 	  usern[strcspn(usern, "\n")] = 0 ;
 		sendMessage(s,usern,0,(struct sockaddr*)&addr_serveur,lg);
 		
     receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
-    fgets(passw,16,stdin);
+		fgets(passw,16,stdin);
 	  passw[strcspn(passw, "\n")] = 0 ;
     sendMessage(s,passw,0,(struct sockaddr*)&addr_serveur,lg);
 	}
@@ -123,29 +127,46 @@ int main ()
 		exit(1);
 	}
   // recvoire la permission pour entrer a jouer
-  receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
+  receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);printf("%s",rep);
   if(strcmp(rep,"AG")) // AG : Access Granted
   {
     // recevoir le menu
-    receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);
+    receive(s,rep,sizeof(rep),0,(struct sockaddr*)&addr_serveur,&lg);printf("%s",rep);
     //envoi du choix
-    fgets(mes,50,stdin);
+    printf("\n client: ");
+		fgets(mes,50,stdin);
 	  mes[strcspn(mes, "\n")] = 0 ;
     sendMessage(s,mes,0,(struct sockaddr*)&addr_serveur,lg);
 
-    if(strcmp(buffer,"1"))
+    if(strcmp(mes,"1")==0)
 		{
-
-		}
-		else if (strcmp(buffer,"2"))
-		{
+			fgets(usern,20,stdin);
+	  	usern[strcspn(usern, "\n")] = 0 ;
+			sendMessage(s,usern,0,(struct sockaddr*)&addr_serveur,lg);
 			
+			fgets(passw,16,stdin);
+	  	passw[strcspn(passw, "\n")] = 0 ;
+	    sendMessage(s,passw,0,(struct sockaddr*)&addr_serveur,lg);
 		}
-		else if (strcmp(buffer,"3"))
+		else if(strcmp(mes,"2")==0)
+		{
+			fgets(email,30,stdin);
+	  	email[strcspn(email, "\n")] = 0 ;
+			sendMessage(s,email,0,(struct sockaddr*)&addr_serveur,lg);
+
+			fgets(usern,20,stdin);
+	  	usern[strcspn(usern, "\n")] = 0 ;
+			sendMessage(s,usern,0,(struct sockaddr*)&addr_serveur,lg);
+			
+			fgets(passw,16,stdin);
+	  	passw[strcspn(passw, "\n")] = 0 ;
+	    sendMessage(s,passw,0,(struct sockaddr*)&addr_serveur,lg);
+		}
+		else if(strcmp(mes,"3")==0)
 		{
 			// Pour l'instant ca marche pas
 		}
-		else if (strcmp(buffer,"quit"))
+		else if(strcmp(mes,"quit")==0)
 		{
 			printf("Demande de terminaison recu !\n");
 			exit(0);
@@ -155,7 +176,7 @@ int main ()
 
 // 	do
 // 	{	
-// 		printf("\n message : ");
+// 		printf("\n client: ");
 // 		fgets(mes,50,stdin);
 // 		mes[strcspn(mes, "\n")] = 0 ;
 		
@@ -188,7 +209,7 @@ int main ()
 // 		}
 
 // 	}while(1);
-
+	puts("------------------| Client CLOSED |------------------\n");
 	close(s);
 	return 0;
 }

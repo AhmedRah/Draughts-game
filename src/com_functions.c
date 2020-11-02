@@ -38,7 +38,7 @@ void EndComu(char* buffer)
 void receive(int s,void* buf,ssize_t len,int flags,struct sockaddr* srcaddr,socklen_t* addrlen)
 {
 	// recevoire les instructions de clinet
-	int nb_octets = recvfrom(s,buf,Sizebuf,0,srcaddr,addrlen);
+	int nb_octets = recvfrom(s,buf,len,0,srcaddr,addrlen);
 	if(nb_octets == -1)
 	{
 		perror("Erreur de reception \n");
@@ -51,19 +51,17 @@ void receive(int s,void* buf,ssize_t len,int flags,struct sockaddr* srcaddr,sock
 //Fonction pour envoyer les messages aux clients
 void sendMessage(int s,void * rep, int flags, const struct sockaddr *dest_addr,socklen_t addrlen)
 {
-		//envoie reponse au client
-		int nb_octets = sendto(s,rep,strlen(rep)+1,flags,dest_addr,addrlen);
-		if(nb_octets == -1)
-		{
-			perror("erreur d'envoie de message");
-			exit(1);
-		}
+	//envoie reponse au client
+	int nb_octets = sendto(s,rep,strlen(rep)+1,flags,dest_addr,addrlen);
+	if(nb_octets == -1)
+	{
+		perror("erreur d'envoie de message");
+		exit(1);
+	}
 }
 
-
-
 // Fonction du bind
-void fun_bind(int s, struct sockaddr_in sin , int ret)
+void fun_bind(int s, struct sockaddr_in sin)
 {
   sin.sin_family = AF_INET;
 	sin.sin_port = htons(8000);
@@ -72,7 +70,7 @@ void fun_bind(int s, struct sockaddr_in sin , int ret)
 	{
 		sin.sin_zero[i] = 0;
 	}
-	ret = bind(s, (struct sockaddr *)&sin, sizeof(struct sockaddr_in));
+	int ret = bind(s, (struct sockaddr *)&sin, sizeof(struct sockaddr_in));
 	if (ret<0) 
 	{
 		printf("error");

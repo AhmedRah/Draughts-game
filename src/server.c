@@ -20,10 +20,10 @@
 #include "com_functions.h"
 
 
-#define Sizebuf 100
+#define Sizebuf 170
 
 #define Menu "\n------ Bonjour au jeu de dame ------\n--- 1) creer une partie\n--- 2) joindre ue partie\n--- 3) reagrder une partie active\n--- 'quit' pour quitter\n------ Votre choix ?\n"
-#define LOG_MENU "\n------ Bonjour au jeu de dame ------\n------ 1) Se connecter\n------ 2) S'inscire\n--------> Votre choix : "
+#define LOG_MENU "\n------ Bonjour au jeu de dame ------\n------ 1) Se connecter\n------ 2) S'inscire\n----> Votre choix ? "
 
 // void sendtoall(char* msg,int curr)
 // {
@@ -38,18 +38,18 @@
 int main()
 {
 	// Liste des clients qui vont communiquer avec le serveur
-	int clients[MAX_CLIENTS];
+	// int clients[MAX_CLIENTS];
 
-	static struct sockaddr_in addr_local ;
-	static struct sockaddr_in addr_client ;
-	struct hostent *host_client ;
+	// struct sockaddr_in addr_local ;
+	struct sockaddr_in addr_client ;
+	// struct hostent *host_client ;
 	socklen_t lg;
 	
-	char * rep = "Well recieved" ;
+	// char * rep = "Well recieved" ;
 	char buffer[Sizebuf];
 
-	char *chaine;
-	int nb_octets;
+	// char *chaine;
+	// int nb_octets;
 
 	// inialisation d'un socket
 	int s;
@@ -62,8 +62,7 @@ int main()
 
 	// Partie du BIND
 	struct sockaddr_in sin;
-	int ret;
-  fun_bind(s,sin,ret);
+  fun_bind(s,sin);
 
 	lg = sizeof(struct sockaddr_in);
 
@@ -74,49 +73,48 @@ int main()
 	char passw[16] ;
 
 	int accessGranted = 0 ;
-
+	puts("------------------| Server ACTIVE |------------------\n");
 	// receive(s,buffer,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
-	host_client = gethostbyaddr(&(addr_client.sin_addr),sizeof(long),AF_INET);
-	if(host_client == NULL)
-	{
-		perror("Erreur gethostbyaddr \n");
-		exit(1);
-	}	
+	receive(s,buffer,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);printf("%s",buffer);	
 	// Presenter le menu d'identification au client
+	printf("%s",buffer);
 	sendMessage(s,LOG_MENU,0,(struct sockaddr *)&addr_client,lg);
 	// Recevoir le choix de connexion
-	receive(s,buffer,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
+	receive(s,buffer,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);printf("%s",buffer);	
 	
 	// Si l'utlisateure veut se connecter
 	if(strcmp(buffer,"1")==0)
 	{// Connexion
 		sendMessage(s,"------ Identification ------ \n",0,(struct sockaddr *)&addr_client,lg);
 		
+		
 		sendMessage(s,"--> Username     : ",0,(struct sockaddr *)&addr_client,lg);
-		receive(s,usern,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
-
+		receive(s,usern,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);printf("%s",usern);
+		printf("%s \n",usern);	
+		
 		sendMessage(s,"--> Mot de passe : ",0,(struct sockaddr *)&addr_client,lg);
-		receive(s,passw,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
-
-		if(log_in(usern,passw))
+		receive(s,passw,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);printf("%s",passw);	
+		printf("%s \n",email);
+		printf("\n%s \n",usern);printf("%s",email);
+		if(log_in(usern,passw)==1)
 		{
 			accessGranted = 1 ;
 		}
 	}
-	else if(buffer == "2")
+	else if(strcmp(buffer,"2")==0)
 	{// Enregistrement
 		sendMessage(s,"------ Enregistrement ------ \n",0,(struct sockaddr *)&addr_client,lg);
 
 		sendMessage(s,"--> Email       : ",0,(struct sockaddr *)&addr_client,lg);
-		receive(s,email,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
+		receive(s,email,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);printf("%s",email);	
 
 		sendMessage(s,"--> Username    : ",0,(struct sockaddr *)&addr_client,lg);
-		receive(s,usern,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
+		receive(s,usern,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);printf("%s",usern);	
 
 		sendMessage(s,"--> Mot de passe: ",0,(struct sockaddr *)&addr_client,lg);
-		receive(s,passw,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);
+		receive(s,passw,Sizebuf,0,(struct sockaddr *)&addr_client,&lg);printf("%s",passw);	
 
-		if(sign_up(email,usern,passw))
+		if(sign_up(email,usern,passw)==1)
 		{
 			accessGranted = 1 ;
 		}
@@ -153,6 +151,7 @@ int main()
 		{
 			if(strcmp(buffer,"1"))
 			{
+				//creer une partie
 				create_game();
 				load_game(Arr_Table);
 			}
@@ -183,9 +182,9 @@ int main()
 	// ------------------------ FIN JEU ------------------------  
 		
 	}
-		printf("**************** Arret du serveur ****************\n");
-		close(s);
-		return 0;
+	puts("------------------| Server CLOSED |------------------\n");
+	close(s);
+	return 0;
 	
 }
 
